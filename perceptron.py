@@ -1,4 +1,6 @@
 import numpy as np
+from sklearn.datasets import fetch_openml
+from sklearn.model_selection import train_test_split
 
 class Perceptron:
   def __init__(self, learning_rate = 0.01, n_iters = 1000): 
@@ -34,4 +36,21 @@ class Perceptron:
   
   def _unit_step_func(self, x):
     return np.where(x>=0, 1, 0) #where x>=0 give 1 otherwise give 0
-    
+
+
+#Now using it on a mnist database
+mnist = fetch_openml('mnist_784', version=1, as_frame=False, parser='liac-arff')
+X,y = mnist.data, mnist.target.astype(int)
+
+X = X/255.0
+
+X_train, X_test, y_train, y_test = train_test_split(X,y, text_size=0.2, random_state=42)
+perceptrons = {}
+
+for digit in range(10):
+  print(f"Number {digit}")
+
+y_train_binary = np.where(y_train == digit,1,0)
+
+p=Perceptron(learning_rate=0.01, n_iters=5)
+p.fit(X_train, y_train_binary)
